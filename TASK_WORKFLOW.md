@@ -33,7 +33,11 @@ baseline except at the user's direction.
    original filing needed to explain an amendment. Additional comparison sources
    must be retained and identified if they support a claimed change.
 6. Write evidence-backed card JSON following `CARD_SCHEMA.md`. Verify key figures
-   against the source. Include direct document links and a clear interpretation
+   against the source. Classify every results-focused filing as `earnings`,
+   regardless of form, and include the required revenue breakout by the company's
+   disclosed business lines with current-period values and year-over-year comparisons
+   when available. Reconcile the disclosed lines to total revenue and note material
+   classification changes. Include direct document links and a clear interpretation
    label. Submit it using `submit-card`. Fix rejected evidence or missing coverage;
    never mark an unread chunk/image as reviewed merely to pass validation.
 7. Obtain validated Markdown from `ready`. Publish one distinct card per accession

@@ -376,9 +376,18 @@ def validate_card(packet, card):
         raise ValueError("Card must record review of every source chunk exactly once")
     if not isinstance(card.get("title"), str) or not card["title"].strip():
         raise ValueError("Missing card title")
+    if card.get("filing_category") not in {"earnings", "ownership", "periodic", "other"}:
+        raise ValueError("Set filing_category to earnings, ownership, periodic, or other")
     if not 1 <= len(card.get("summary", [])) <= 3 or not 1 <= len(card.get("facts", [])) <= 5:
         raise ValueError("Require 1–3 summary statements and 1–5 key facts")
-    claims = [*card["summary"], *card["facts"], card.get("why_it_matters", {})]
+    revenue_breakout = card.get("revenue_breakout", [])
+    if card["filing_category"] == "earnings" and not revenue_breakout:
+        raise ValueError("Earnings cards require a revenue_breakout by disclosed business line")
+    if revenue_breakout and card["filing_category"] != "earnings":
+        raise ValueError("revenue_breakout is reserved for earnings-related filings")
+    if not isinstance(revenue_breakout, list) or len(revenue_breakout) > 10:
+        raise ValueError("revenue_breakout must be a list of no more than 10 business lines")
+    claims = [*card["summary"], *revenue_breakout, *card["facts"], card.get("why_it_matters", {})]
     if card.get("watch_next"):
         claims.append(card["watch_next"])
     for claim in claims:
@@ -418,7 +427,12 @@ def render_card(packet, card, preview=False):
     lines = [f"### PHR · {filing['form']} · {card['title']}", "", f"{'**PREVIEW — historical example** · ' if preview else ''}Filed: {accepted}", ""]
     if filing.get("report_date"):
         lines.extend([f"Reporting period/event date: {filing['report_date']}", ""])
-    lines.extend(["**What happened**", "", " ".join(linked(claim) for claim in card["summary"]), "", "**Key facts**", ""])
+    lines.extend(["**What happened**", "", " ".join(linked(claim) for claim in card["summary"]), ""])
+    if card.get("revenue_breakout"):
+        lines.extend(["**Revenue by business line**", ""])
+        lines.extend("- " + linked(claim) for claim in card["revenue_breakout"])
+        lines.append("")
+    lines.extend(["**Key facts**", ""])
     lines.extend("- " + linked(claim) for claim in card["facts"])
     lines.extend(["", "**Why it matters — interpretation**", "", linked(card["why_it_matters"])])
     if card.get("watch_next"):
@@ -431,7 +445,7 @@ def render_card(packet, card, preview=False):
 
 def save_card(state, accession, card):
     row = state.row(accession)
-    if row["status"] != "retrieved":
+    if row["status"] not in {"retrieved", "ready"}:
         raise ValueError("Prepare the filing before submitting a new card")
     packet = json.loads(Path(row["packet"]).read_text())
     validate_card(packet, card)

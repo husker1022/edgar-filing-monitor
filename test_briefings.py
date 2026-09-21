@@ -130,7 +130,7 @@ class MonitorTests(unittest.TestCase):
         filing = json.loads(self.state.row(accession)["metadata"])
         packet = {"filing": filing, "documents": [{"id": "doc", "type": "8-K", "url": "https://www.sec.gov/Archives/filing.htm", "chunks": [{"id": "doc:1", "text": "Revenue increased to $129.5 million."}]}], "issues": []}
         claim = {"text": "Revenue reached $129.5 million.", "evidence": [{"document_id": "doc", "quote": "Revenue increased to $129.5 million."}]}
-        card = {"title": "Revenue update", "summary": [claim], "facts": [claim], "why_it_matters": {**claim, "kind": "interpretation"}, "reviewed_chunks": ["doc:1"]}
+        card = {"filing_category": "other", "title": "Revenue update", "summary": [claim], "facts": [claim], "why_it_matters": {**claim, "kind": "interpretation"}, "reviewed_chunks": ["doc:1"]}
         path = Path(self.temp.name) / "packet.json"
         b.atomic_json(path, packet)
         with self.state.db:
@@ -148,6 +148,27 @@ class MonitorTests(unittest.TestCase):
         b.mark_delivered(self.state, accession, "task:verified-message-1")
         b.mark_delivered(self.state, accession, "task:verified-message-1")
         self.assertEqual(b.queue(self.state), [])
+
+    def test_earnings_cards_require_and_render_business_line_revenue(self):
+        accession, packet, card = self.packet_and_card()
+        card["filing_category"] = "earnings"
+        with self.assertRaisesRegex(ValueError, "revenue_breakout"):
+            b.validate_card(packet, card)
+        card["revenue_breakout"] = [card["facts"][0]]
+        b.save_card(self.state, accession, card)
+        markdown = self.state.row(accession)["markdown"]
+        self.assertIn("**Revenue by business line**", markdown)
+        self.assertIn("Revenue reached $129.5 million.", markdown)
+
+    def test_ready_card_can_be_revised_but_delivered_card_cannot(self):
+        accession, _, card = self.packet_and_card()
+        b.save_card(self.state, accession, card)
+        card["title"] = "Revised revenue update"
+        b.save_card(self.state, accession, card)
+        self.assertIn("Revised revenue update", self.state.row(accession)["markdown"])
+        b.mark_delivered(self.state, accession, "task:verified-message-2")
+        with self.assertRaisesRegex(ValueError, "Prepare the filing"):
+            b.save_card(self.state, accession, card)
 
     def test_missing_evidence_and_unread_chunks_rejected(self):
         accession, packet, card = self.packet_and_card()

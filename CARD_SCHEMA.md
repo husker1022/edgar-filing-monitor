@@ -12,6 +12,7 @@ long quotations in the user-facing card.
 
 ```json
 {
+  "filing_category": "earnings",
   "title": "Short descriptive event title",
   "summary": [
     {
@@ -25,6 +26,12 @@ long quotations in the user-facing card.
       "evidence": [{"document_id": "actual-id", "quote": "Exact supporting source excerpt of at least 12 characters"}]
     }
   ],
+  "revenue_breakout": [
+    {
+      "text": "Company-disclosed business line: current-period revenue, with year-over-year amount or rate when disclosed.",
+      "evidence": [{"document_id": "actual-id", "quote": "Exact supporting source excerpt of at least 12 characters"}]
+    }
+  ],
   "why_it_matters": {
     "kind": "interpretation",
     "text": "Restrained interpretation grounded in the disclosure.",
@@ -35,7 +42,19 @@ long quotations in the user-facing card.
 }
 ```
 
-Require 1–3 summary statements and 1–5 facts. Each statement may cite multiple
+Classify each filing as `earnings`, `ownership`, `periodic`, or `other`. Use
+`earnings` for every filing centered on reported financial results or an earnings
+update, regardless of SEC form. Every earnings card must include a
+`revenue_breakout` entry for each revenue business line disclosed by the company.
+Use the company's exact labels, current-period amounts, and year-over-year amounts
+or growth rates when available. Reconcile the lines to total revenue, and explain
+material presentation changes such as acquisitions or renamed lines. When the
+source does not disclose a business-line split, include one sourced entry saying
+that the breakout was not disclosed; do not infer or manufacture allocations.
+Omit `revenue_breakout` for non-earnings filings.
+
+Require 1–3 summary statements and 1–5 facts. Revenue breakout entries are shown
+in their own section and do not count toward the five-fact limit. Each statement may cite multiple
 excerpts. Add `watch_next` in the same text/evidence format only for a specific
 disclosed future event or unresolved condition. Omit it when none is supported.
 

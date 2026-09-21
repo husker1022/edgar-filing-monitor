@@ -4,12 +4,14 @@ Validated locally on September 20, 2026 (Eastern Time).
 
 ## Automated checks
 
-`python3 -m unittest -v test_briefings` — 19 tests passed.
+`python3 -m unittest -v test_briefings` — 21 tests passed.
 
 The tests exercise archive recovery, overlap discovery, deduplication, amendments,
 malformed inventory, source identity, checkpoint preservation on failure, restart
 recovery, evidence matching, explicit image review, ownership XML footnotes,
 long-document preservation, retryable preparation failures, and delivery gates.
+They also enforce and render the revenue-by-business-line section for earnings
+cards and permit a reviewed card to be revised before publication.
 
 `git diff --check` — passed for tracked modifications. New Python modules also
 imported and executed during tests and live retrieval.
