@@ -38,7 +38,11 @@ baseline except at the user's direction.
    disclosed business lines with current-period values and year-over-year comparisons
    when available. Reconcile the disclosed lines to total revenue and note material
    classification changes. Include direct document links and a clear interpretation
-   label. Submit it using `submit-card`. Fix rejected evidence or missing coverage;
+   label. For ownership filings, calculate the value of each transaction from the
+   disclosed share count and price. When an award is reported at $0, distinguish
+   its $0 cash transaction value from any estimated grant-date market value based
+   on a valuation price disclosed in the filing. Submit it using `submit-card`.
+   Fix rejected evidence or missing coverage;
    never mark an unread chunk/image as reviewed merely to pass validation.
 7. Obtain validated Markdown from `ready`. Publish one distinct card per accession
    in the final response, oldest first. A large backlog can be split into clearly

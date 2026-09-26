@@ -387,7 +387,14 @@ def validate_card(packet, card):
         raise ValueError("revenue_breakout is reserved for earnings-related filings")
     if not isinstance(revenue_breakout, list) or len(revenue_breakout) > 10:
         raise ValueError("revenue_breakout must be a list of no more than 10 business lines")
-    claims = [*card["summary"], *revenue_breakout, *card["facts"], card.get("why_it_matters", {})]
+    transaction_values = card.get("transaction_values", [])
+    if card["filing_category"] == "ownership" and not transaction_values:
+        raise ValueError("Ownership cards require transaction_values")
+    if transaction_values and card["filing_category"] != "ownership":
+        raise ValueError("transaction_values is reserved for ownership filings")
+    if not isinstance(transaction_values, list) or len(transaction_values) > 20:
+        raise ValueError("transaction_values must be a list of no more than 20 transactions")
+    claims = [*card["summary"], *revenue_breakout, *transaction_values, *card["facts"], card.get("why_it_matters", {})]
     if card.get("watch_next"):
         claims.append(card["watch_next"])
     for claim in claims:
@@ -431,6 +438,10 @@ def render_card(packet, card, preview=False):
     if card.get("revenue_breakout"):
         lines.extend(["**Revenue by business line**", ""])
         lines.extend("- " + linked(claim) for claim in card["revenue_breakout"])
+        lines.append("")
+    if card.get("transaction_values"):
+        lines.extend(["**Transaction value**", ""])
+        lines.extend("- " + linked(claim) for claim in card["transaction_values"])
         lines.append("")
     lines.extend(["**Key facts**", ""])
     lines.extend("- " + linked(claim) for claim in card["facts"])

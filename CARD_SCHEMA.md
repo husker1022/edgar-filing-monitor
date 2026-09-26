@@ -32,6 +32,12 @@ long quotations in the user-facing card.
       "evidence": [{"document_id": "actual-id", "quote": "Exact supporting source excerpt of at least 12 characters"}]
     }
   ],
+  "transaction_values": [
+    {
+      "text": "Shares × disclosed price = total transaction value, with the price basis clearly labeled.",
+      "evidence": [{"document_id": "actual-id", "quote": "Exact supporting source excerpt of at least 12 characters"}]
+    }
+  ],
   "why_it_matters": {
     "kind": "interpretation",
     "text": "Restrained interpretation grounded in the disclosure.",
@@ -53,8 +59,20 @@ source does not disclose a business-line split, include one sourced entry saying
 that the breakout was not disclosed; do not infer or manufacture allocations.
 Omit `revenue_breakout` for non-earnings filings.
 
+Every `ownership` card must include `transaction_values`, with a separate entry
+for each reported transaction or transaction lot. Calculate shares multiplied by
+the filing's transaction price. For a compensation award reported at $0, report
+the $0 cash transaction value and, when the filing discloses a closing price or
+other valuation basis, also calculate and label the estimated grant-date market
+value. Explain that the $0 price reflects an award rather than a cash purchase.
+Do not substitute a current market price without adding and retaining a reliable
+source. If an ownership filing reports holdings but no transaction, add a sourced
+entry saying that no transaction value applies. Omit `transaction_values` for
+non-ownership filings.
+
 Require 1–3 summary statements and 1–5 facts. Revenue breakout entries are shown
-in their own section and do not count toward the five-fact limit. Each statement may cite multiple
+in their own section and transaction-value entries in theirs; neither counts toward
+the five-fact limit. Each statement may cite multiple
 excerpts. Add `watch_next` in the same text/evidence format only for a specific
 disclosed future event or unresolved condition. Omit it when none is supported.
 

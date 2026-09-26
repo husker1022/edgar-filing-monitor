@@ -19,6 +19,8 @@ is required for this mode. Task execution still uses the user's Codex usage.
   of every reviewed chunk/image. Quotes must occur in retrieved source text.
 - A required, separately rendered revenue-by-business-line section for every
   earnings-related filing, regardless of SEC form.
+- A separately rendered transaction-value calculation for ownership filings,
+  including the distinction between $0 compensation awards and market value.
 - Saved, validated Markdown cards and explicit post-publication acknowledgments.
 - One SEC request per second per process, finite retries, and local command locking.
 

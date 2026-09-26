@@ -160,6 +160,17 @@ class MonitorTests(unittest.TestCase):
         self.assertIn("**Revenue by business line**", markdown)
         self.assertIn("Revenue reached $129.5 million.", markdown)
 
+    def test_ownership_cards_require_and_render_transaction_value(self):
+        accession, packet, card = self.packet_and_card()
+        card["filing_category"] = "ownership"
+        with self.assertRaisesRegex(ValueError, "transaction_values"):
+            b.validate_card(packet, card)
+        card["transaction_values"] = [card["facts"][0]]
+        b.save_card(self.state, accession, card)
+        markdown = self.state.row(accession)["markdown"]
+        self.assertIn("**Transaction value**", markdown)
+        self.assertIn("Revenue reached $129.5 million.", markdown)
+
     def test_ready_card_can_be_revised_but_delivered_card_cannot(self):
         accession, _, card = self.packet_and_card()
         b.save_card(self.state, accession, card)
