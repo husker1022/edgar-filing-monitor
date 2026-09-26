@@ -5,3 +5,8 @@ output/*
 __pycache__/
 *.pyc
 .DS_Store
+.venv/
+monitor-state/
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
